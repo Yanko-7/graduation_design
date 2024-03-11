@@ -55,6 +55,12 @@ class splitbase():
                  padding=True,
                  num_process=8
                  ):
+        
+        # - basepath
+        # - - images
+        # - - - Pxxx.png
+        # - - labelTxt
+        # - - - Pxxx.txt
         """
         :param basepath: base path for dota data  
         :param outpath: output base path for dota data, 
