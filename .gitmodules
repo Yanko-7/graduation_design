@@ -1,3 +1,6 @@
 [submodule "yolov5"]
 	path = yolov5
 	url = https://github.com/ultralytics/yolov5.git
+[submodule "utils/DOTA_devkit_YOLO"]
+	path = utils/DOTA_devkit_YOLO
+	url = https://github.com/hukaixuan19970627/DOTA_devkit_YOLO.git
