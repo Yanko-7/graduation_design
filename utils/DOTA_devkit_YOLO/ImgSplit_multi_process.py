@@ -301,6 +301,10 @@ if __name__ == '__main__':
     #
     # d)
 
+    # input 'path/to/train'
+    # train/
+    #       -images/
+    #       -labelTxt
     split = splitbase(r'example',
                       r'example_split',
                       gap=200,        # 
