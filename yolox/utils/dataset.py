@@ -19,6 +19,7 @@ class listDataset(Dataset):
             self.patch = int(self.lines[0].rstrip().split(':')[1])
             self.lines = self.lines[1:]
             random.shuffle(self.lines)
+            print(self.lines)
         else:
             self.patch = patch
         self.nSamples = len(self.lines)

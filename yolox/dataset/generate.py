@@ -4,13 +4,77 @@ import math
 from collections import defaultdict
 import numpy
 import glob
-labels = ['A','B','C','D','E','F','G','H','I','J','K']
+from PIL import Image
+import sys
+import shapely.geometry as shgeo
+labels = ['plane','ship','storage-tank','baseball-diamond','tennis-court','basketball-court',
+          'ground-track-field','harbor','bridge','large-vehicle','small-vehicle', 'helicopter', 'roundabout', 'soccer-ball-field', 'swimming-pool']
 #生成训练集标签，格式
 # 图片路径 框1 框2
 # 框的格式 id,x1,y1,x2,y2,a
 # 数据集解压到同级文件夹
 #生成trainlist.txt,testlist.txt
-def generate_dataset(path,save_name,patch = 1,train = True):
+def parse_dota_poly(filename):
+    """
+        parse the dota ground truth in the format:
+        [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
+    """
+    objects = []
+    #print('filename:', filename)
+    f = []
+    if (sys.version_info >= (3, 5)):
+        fd = open(filename, 'r')
+        f = fd
+    elif (sys.version_info >= 2.7):
+        fd = codecs.open(filename, 'r')
+        f = fd
+    # count = 0
+    while True:
+        line = f.readline()
+        # count = count + 1
+        # if count < 2:
+        #     continue
+        if line:
+            splitlines = line.strip().split(' ')
+            object_struct = {}
+            ### clear the wrong name after check all the data
+            #if (len(splitlines) >= 9) and (splitlines[8] in classname):
+            if (len(splitlines) < 9):
+                continue
+            if (len(splitlines) >= 9):
+                    object_struct['name'] = splitlines[8]
+            if (len(splitlines) == 9):
+                object_struct['difficult'] = '0'
+            elif (len(splitlines) >= 10):
+                # if splitlines[9] == '1':
+                # if (splitlines[9] == 'tr'):
+                #     object_struct['difficult'] = '1'
+                # else:
+                object_struct['difficult'] = splitlines[9]
+                # else:
+                #     object_struct['difficult'] = 0
+            object_struct['poly'] = [(float(splitlines[0]), float(splitlines[1])),
+                                     (float(splitlines[2]), float(splitlines[3])),
+                                     (float(splitlines[4]), float(splitlines[5])),
+                                     (float(splitlines[6]), float(splitlines[7]))
+                                     ]
+            gtpoly = shgeo.Polygon(object_struct['poly'])
+            object_struct['area'] = gtpoly.area
+            # poly = list(map(lambda x:np.array(x), object_struct['poly']))
+            # object_struct['long-axis'] = max(distance(poly[0], poly[1]), distance(poly[1], poly[2]))
+            # object_struct['short-axis'] = min(distance(poly[0], poly[1]), distance(poly[1], poly[2]))
+            # if (object_struct['long-axis'] < 15):
+            #     object_struct['difficult'] = '1'
+            #     global small_count
+            #     small_count = small_count + 1
+            objects.append(object_struct)
+        else:
+            break
+    return objects
+# from ../utils/DOTA_devkit_YOLO
+
+
+def generate_dataset(path, save_name, txtpath ,patch = 1,train = True):
     img_name = list(filter(lambda x:x[-3:]=='png',os.listdir(path)))
     total_line = ""
     if train:
@@ -18,17 +82,21 @@ def generate_dataset(path,save_name,patch = 1,train = True):
     cur_labels = set()
     for iname in img_name:
         ip = path + '/'+iname
-        ip_json = ip.split('.')[0]+'.json'
-        data =json.load(open(ip_json,'r',encoding='utf-8'))
+        ip_label = (txtpath + '/' + iname).split('.')[0] + '.txt'
+        # ip_json = ip.split('.')[0]+'.json'
+        # data =json.load(open(ip_json,'r',encoding='utf-8'))
         root_path = "dataset/"+ip
-        iw = data["imageHeight"]
-        ih = data["imageWidth"]
+        with Image.open(ip) as img:
+            ih, iw = img.size
+        # iw = data["imageHeight"]
+        # ih = data["imageWidth"]
         meshxy = defaultdict(list)
         boxes = []
-        for k,shape in enumerate(data['shapes']):
-            label = labels.index(shape['label'])
-            cur_labels.add(shape['label'])
-            points = shape['points']
+        objects = parse_dota_poly(ip_label)
+        for obj in objects:
+            label = labels.index(obj['name'])
+            cur_labels.add(label)
+            points = obj['poly']
             w = ((points[0][0]-points[1][0])**2+(points[0][1]-points[1][1])**2)**0.5
             h = ((points[1][0]-points[2][0])**2+(points[1][1]-points[2][1])**2)**0.5
             if w>h:
@@ -46,6 +114,7 @@ def generate_dataset(path,save_name,patch = 1,train = True):
             cy = (points[0][1]+points[2][1])/2.0
             a = round(a, 4)
             keypoint = [max(int(cx - w/2.0),0),max(int(cy - h/2.0),0),min(int(cx+w/2.0),iw),min(int(cy+h/2.0),ih)]
+            print(keypoint)
             if patch>1:
                 sw = iw//patch
                 sh = ih//patch
@@ -75,5 +144,5 @@ def generate_dataset(path,save_name,patch = 1,train = True):
         f.write(total_line)
     print(sorted(list(cur_labels)))
 if __name__=="__main__":
-    generate_dataset('train','trainlist.txt',patch=4,train=True)
-    generate_dataset('val', 'vallist.txt',patch=1,train=False)
+    generate_dataset('train','trainlist.txt','train' ,patch=4,train=True)
+    generate_dataset('val', 'vallist.txt', 'val',patch=1,train=False)

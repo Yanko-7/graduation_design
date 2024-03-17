@@ -1,0 +1,14 @@
+{'epoch': 0, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 1, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 2, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 3, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 0, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 1, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 2, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 3, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 4, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 5, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 6, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 7, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 8, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}
+{'epoch': 9, 'baseball-diamond': 0.0, 'tennis-court': 0.0, 'ground-track-field': 0.0, 'swimming-pool': 0.0}

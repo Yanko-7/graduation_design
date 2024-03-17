@@ -69,7 +69,9 @@ def fit_one_epoch(epoch, Epoch, gen, genval):
                     images = F.interpolate(images,size=img_sz,mode='bilinear',align_corners=False)
                 #-------------获得关键帧-------------#
                 # labels = [torch.from_numpy(ann).float() for ann in labels]
-                labels = [torch.from_numpy(ann).type(torch.FloatTensor).cuda() for ann in labels]
+                devicess = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                labels = [torch.from_numpy(ann).type(torch.FloatTensor).to(devicess) for ann in labels]
+                #labels = [torch.from_numpy(ann).type(torch.FloatTensor).cuda() for ann in labels]
             if not amp:
                 optimizer.zero_grad()
                 outputs = net(images)
