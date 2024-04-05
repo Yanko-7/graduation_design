@@ -23,7 +23,7 @@ from utils.autoanchor import check_anchor_order
 from utils.general import LOGGER, check_version, check_yaml, make_divisible, print_args
 from utils.plots import feature_visualization
 from utils.torch_utils import fuse_conv_and_bn, initialize_weights, model_info, scale_img, select_device, time_sync
-
+from models.swintransformer import SwinStage, PatchMerging, PatchEmbed
 try:
     import thop  # for FLOPs computation
 except ImportError:
@@ -285,8 +285,9 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
                 pass
 
         n = n_ = max(round(n * gd), 1) if n > 1 else n  # depth gain
-        if m in [Conv, GhostConv, Bottleneck, GhostBottleneck, SPP, SPPF, DWConv, MixConv2d, Focus, CrossConv,
-                 BottleneckCSP, C3, C3TR, C3SPP, C3Ghost]:
+        if m in {
+                Conv, GhostConv, Bottleneck, GhostBottleneck, SPP, SPPF, DWConv, MixConv2d, Focus, CrossConv,
+                PatchMerging, PatchEmbed,BottleneckCSP, C3, C3TR, C3SPP, C3Ghost, nn.ConvTranspose2d, SwinStage, CBAM}:
             c1, c2 = ch[f], args[0]
             if c2 != no:  # if not output
                 c2 = make_divisible(c2 * gw, 8)
@@ -325,7 +326,7 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default='yolov5s.yaml', help='model.yaml')
+    parser.add_argument('--cfg', type=str, default='yolov5s_swin_tiny.yaml', help='model.yaml')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--profile', action='store_true', help='profile model speed')
     parser.add_argument('--test', action='store_true', help='test all yolo*.yaml')
@@ -340,7 +341,7 @@ if __name__ == '__main__':
 
     # Profile
     if opt.profile:
-        img = torch.rand(8 if torch.cuda.is_available() else 1, 3, 640, 640).to(device)
+        img = torch.rand(8 if torch.cuda.is_available() else 1, 3, 1024, 1024).to(device)
         y = model(img, profile=True)
 
     # Test all models
